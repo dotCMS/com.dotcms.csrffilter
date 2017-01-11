@@ -48,7 +48,7 @@ task fragment(type: Zip, dependsOn: mani) {
    	from tmpPath
   	include '*'
    	include '*/*' //to include contents of a folder present inside Reports directory
-   	archiveName 'exports-fragment.jar'
+   	archiveName 'csrf-exports-fragment.jar'
    	destinationDir(file('build/libs'))
 }
 
@@ -56,7 +56,7 @@ task fragment(type: Zip, dependsOn: mani) {
 
 jar {
     manifest {
-        name = 'Osgi Servlet'
+        name = 'CSRF Filter'
         instruction 'Bundle-Vendor', 'dotcms'
         instruction 'Bundle-Description', 'dotCMS CSRF Filter'
         instruction 'Bundle-DocURL', 'https://dotcms.com'

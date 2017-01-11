@@ -20,15 +20,16 @@ import com.dotmarketing.business.DotStateException;
 import com.dotmarketing.util.Config;
 import com.dotmarketing.util.Logger;
 
-enum FilterOrder{
+enum FilterOrder {
   FIRST, LAST;
 }
+
 
 public class TomcatServletFilterUtil {
 
   private final StandardContext standardContext;
 
-  
+
   public TomcatServletFilterUtil(StandardContext con) {
     standardContext = con;
   }
@@ -119,8 +120,9 @@ public class TomcatServletFilterUtil {
     } catch (Exception e) {
       throw new DotStateException(e.getMessage(), e);
     }
-    if(restart) standardContext.filterStart();
-    
+    if (restart)
+      standardContext.filterStart();
+
   }
 
   void addFilter(String filterName, Filter filter, FilterOrder order, String... urlPatterns)
@@ -140,10 +142,9 @@ public class TomcatServletFilterUtil {
 
 
 
-
     standardContext.addFilterDef(filterDef);
 
-    boolean last = order==FilterOrder.LAST;
+    boolean last = order == FilterOrder.LAST;
 
     FilterRegistration.Dynamic app = new ApplicationFilterRegistration(filterDef, standardContext);
 

@@ -8,8 +8,8 @@ import com.dotmarketing.osgi.GenericBundleActivator;
 public class Activator extends GenericBundleActivator {
 
 
-  final static String FILTER_NAME = "helloWorldFilter";
-  final static String SERVLET_NAME = "helloWorldServlet";
+  final static String FILTER_NAME = "csrfFilter";
+
 
   @SuppressWarnings("unchecked")
   public void start(BundleContext bundleContext) throws Exception {
@@ -18,7 +18,7 @@ public class Activator extends GenericBundleActivator {
 
     // putting this filter last becuase the CMSFilter does not interact with the back end
     // urls
-    new TomcatServletFilterUtil().addFilter(FILTER_NAME, new CSRFFilter(), FilterOrder.LAST, "*", "/helloWorld");
+    new TomcatServletFilterUtil().addFilter(FILTER_NAME, new CSRFFilter(), FilterOrder.LAST, "*");
 
 
   }
@@ -26,7 +26,6 @@ public class Activator extends GenericBundleActivator {
 
 
   public void stop(BundleContext context) {
-    new TomcatServletFilterUtil().removeServlet(SERVLET_NAME);
     new TomcatServletFilterUtil().removeFilter(FILTER_NAME);
 
   }

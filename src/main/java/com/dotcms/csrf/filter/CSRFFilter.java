@@ -13,6 +13,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.dotmarketing.beans.Host;
 import com.dotmarketing.business.APILocator;
@@ -63,7 +64,8 @@ public class CSRFFilter implements Filter {
       if (protectedUri(req)) {
         HttpServletRequest request = (HttpServletRequest) req;
         if (!allowedReferer(request)) {
-          res.getWriter().println("HTTP/1.1 403 Forbidden");
+          
+          ((HttpServletResponse)res).sendError(403);
           return;
         }
       }
