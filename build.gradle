@@ -1,0 +1,78 @@
+apply plugin: 'application'
+apply plugin: 'osgi'
+apply plugin: 'war'
+apply plugin: 'eclipse'
+
+sourceCompatibility = '1.8'
+version = '0.1'
+
+
+repositories {
+	maven {
+        url "http://repo.dotcms.com/artifactory/libs-release"
+    }
+}
+dependencies {
+	compile fileTree(dir: 'src/main/resources/libs', include: '*.jar')
+	compile (group: 'com.dotcms', name: 'dotcms', version: '3.6.0'){
+		transitive = true
+	}
+	providedCompile "javax.servlet:javax.servlet-api:3.0.1"
+	providedCompile 'org.apache.tomcat:tomcat-catalina:8.0.18'
+
+}
+def tmpPath = "build/tmp/fragment"
+
+task mani{
+
+	doLast {
+		new File( tmpPath + "/META-INF").mkdirs()
+	
+		def exportFragmentStr = '''\
+Bundle-ManifestVersion: 2
+Bundle-Name: System extra packages
+Bundle-SymbolicName: fragment.system.extra.packages
+Bundle-Version: 1.0
+Bundle-Description: Bundle exporting 3rdparty libs
+Fragment-Host: system.bundle; extension:=framework
+Export-Package: org.apache.tomcat.util.descriptor.web,javax.servlet,javax.servlet.annotation,javax.servlet.http,org.apache.catalina,org.apache.catalina.core,org.apache.tomcat.util.descriptor.web
+		'''
+		new File(tmpPath + "/META-INF/MANIFEST.MF").write(exportFragmentStr)
+	}
+}
+
+
+
+task fragment(type: Zip, dependsOn: mani) {
+	new File("build/libs").mkdirs()
+   	from tmpPath
+  	include '*'
+   	include '*/*' //to include contents of a folder present inside Reports directory
+   	archiveName 'exports-fragment.jar'
+   	destinationDir(file('build/libs'))
+}
+
+
+
+jar {
+    manifest {
+        name = 'Osgi Servlet'
+        instruction 'Bundle-Vendor', 'dotcms'
+        instruction 'Bundle-Description', 'dotCMS CSRF Filter'
+        instruction 'Bundle-DocURL', 'https://dotcms.com'
+        instruction 'Bundle-Activator', 'com.dotcms.csrf.filter.Activator'
+        instruction 'DynamicImport-Package', '*'
+        instruction 'Import-Package', '*;version=0'
+        instruction 'Override-Classes', 'com.dotcms.csrf.filter.CSRFFilter'
+    }
+
+}
+jar.dependsOn fragment
+
+
+
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.9'
+}
+
