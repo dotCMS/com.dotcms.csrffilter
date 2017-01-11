@@ -33,6 +33,6 @@ Building this plugin will provide two jars, both of which need to be installed i
 git clone https://github.com/dotCMS/com.dotcms.csrffilter.git
 cd com.dotcms.csrffilter
 ./gradlew clean jar
-``
+```
 
 
