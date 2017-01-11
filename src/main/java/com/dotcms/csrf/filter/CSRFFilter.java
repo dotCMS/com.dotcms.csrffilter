@@ -34,25 +34,25 @@ public class CSRFFilter implements Filter {
     Logger.info(CSRFFilter.class.getName(), "initing");
     String[] strings = PluginProperties.getPropertyArray("csrf.protect.uri");
     for (String x : strings) {
-      Logger.info("CSRFFilter", "csrf protected:" + x);
+      Logger.info(this, "csrf protected:" + x);
       protectedUri.add(x);
     }
 
     strings = PluginProperties.getPropertyArray("csrf.whitelist.uri");
     for (String x : strings) {
-      Logger.info("CSRFFilter", "csrf whitelisted:" + x);
+      Logger.info(this, "csrf whitelisted:" + x);
       whitelistUri.add(x);
     }
     
     strings = PluginProperties.getPropertyArray("csrf.valid.host.referers");
     for (String x : strings) {
-      Logger.info("CSRFFilter", "csrf allowed referering domains:" + x);
+      Logger.info(this, "csrf allowed referering domains:" + x);
       validReferers.add(x);
     }
     
     strings = PluginProperties.getPropertyArray("csrf.whitelist.host");
     for (String x : strings) {
-      Logger.info("CSRFFilter", "csrf whitelisted domains:" + x);
+      Logger.info(this, "csrf whitelisted domains:" + x);
       whitelistHosts.add(x);
     }
   }
@@ -106,7 +106,7 @@ public class CSRFFilter implements Filter {
       URL url = new URL(referer);
       refererHost = url.getHost();
       if (validReferers.contains(refererHost)) {
-        Logger.debug("CSRFFilter", "found in our allowed list" + refererHost);
+        Logger.debug(this, "found in our allowed list" + refererHost);
         return true;
       }
 
@@ -117,7 +117,7 @@ public class CSRFFilter implements Filter {
           foundHost = APILocator.getHostAPI().findByAlias(refererHost, APILocator.getUserAPI().getSystemUser(), false);
         }
         if (UtilMethods.isSet(foundHost)) {
-          Logger.debug("CSRFFilter", "found in our host list" + refererHost);
+          Logger.debug(this, "found in our host list" + refererHost);
           return true;
         }
       } catch (Exception e) {
