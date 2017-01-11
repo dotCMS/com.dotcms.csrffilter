@@ -113,10 +113,10 @@ public class CSRFFilter implements Filter {
       try {
         // Trying to find the host in our list of hosts
         Host foundHost = APILocator.getHostAPI().findByName(refererHost, APILocator.getUserAPI().getSystemUser(), false);
-        if (UtilMethods.isSet(foundHost) && UtilMethods.isSet(foundHost.getInode())) {
+        if (!UtilMethods.isSet(foundHost) ) {
           foundHost = APILocator.getHostAPI().findByAlias(refererHost, APILocator.getUserAPI().getSystemUser(), false);
         }
-        if (UtilMethods.isSet(foundHost) && UtilMethods.isSet(foundHost.getInode())) {
+        if (UtilMethods.isSet(foundHost)) {
           Logger.debug("CSRFFilter", "found in our host list" + refererHost);
           return true;
         }
