@@ -1,4 +1,4 @@
-# DOTCMS CSRFFILTER
+# dotCMS CsrfFilter
 
 This filter can help provide a first line of protection from CSRF (Cross-site Request Forgery) type attacks
 
@@ -11,7 +11,7 @@ Out of the box, there are 4 properties that can be adjusted by editing src/main/
 csrf.protect.uri=/c/portal,/api,/dotCMS,/html/,/html/ng,/dwr,/servlet,/DotAjaxDirector,/dotScheduledJobs,/dotTailLogServlet,/categoriesServlet,/JSONTags
 
 
-## These are valid referering hosts (in addition to the hosts and aliases in dotCMS
+## These are valid referering hosts (in addition to the hosts and aliases set in dotCMS)
 csrf.valid.host.referers=testing.dotcms.com,localhost,127.0.0.1
 
 
