@@ -19,6 +19,7 @@ import com.dotmarketing.beans.Host;
 import com.dotmarketing.business.APILocator;
 import com.dotmarketing.business.DotStateException;
 import com.dotmarketing.util.Logger;
+import com.dotmarketing.util.SecurityLogger;
 import com.dotmarketing.util.UtilMethods;
 
 public class CSRFFilter implements Filter {
@@ -99,11 +100,11 @@ public class CSRFFilter implements Filter {
   }
 
   private boolean allowedReferer(HttpServletRequest req) throws MalformedURLException {
-
+    String refererHost = req.getServerName();
     String referer = req.getHeader("referer");
     if (referer != null) {
       URL url = new URL(referer);
-      String refererHost = url.getHost();
+      refererHost = url.getHost();
       if (validReferers.contains(refererHost)) {
         Logger.debug("CSRFFilter", "found in our allowed list" + refererHost);
         return true;
@@ -111,21 +112,22 @@ public class CSRFFilter implements Filter {
 
       try {
         // Trying to find the host in our list of hosts
-        Host foundHost =
-            APILocator.getHostAPI().findByName(refererHost, APILocator.getUserAPI().getSystemUser(), false);
-        if (!UtilMethods.isSet(foundHost)) {
+        Host foundHost = APILocator.getHostAPI().findByName(refererHost, APILocator.getUserAPI().getSystemUser(), false);
+        if (UtilMethods.isSet(foundHost) && UtilMethods.isSet(foundHost.getInode())) {
           foundHost = APILocator.getHostAPI().findByAlias(refererHost, APILocator.getUserAPI().getSystemUser(), false);
         }
         if (UtilMethods.isSet(foundHost) && UtilMethods.isSet(foundHost.getInode())) {
-          Logger.warn("CSRFFilter", "protected url has invalid referer:" + refererHost);
-          
           Logger.debug("CSRFFilter", "found in our host list" + refererHost);
+          return true;
         }
       } catch (Exception e) {
         throw new DotStateException(e.getMessage(), e);
       }
 
     }
+    String msg = "CSRFFilter ip:" + req.getRemoteAddr()+" has invalid referer:" + refererHost +  " url:" + req.getRequestURL();
+    SecurityLogger.logInfo(this.getClass(), msg);
+    Logger.warn(this.getClass(),  msg  );
     return false;
   }
 
