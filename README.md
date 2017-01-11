@@ -4,9 +4,9 @@ This filter can help provide a first line of protection from CSRF (Cross-site Re
 
 This Filter will only run via OSGi in dotCMS running under the Tomcat servlet container.  If you are running dotCMS in another app server, you will need to copy the logic of this plugin and provide it as a "static" plugin. 
 
-It is provided as an OSGI plugin and can be configured and dropped on a running dotCMS server and initialize itself.  
+It is provided as an OSGI plugin and can be configured and dropped on a running dotCMS 3.+ server and initialize itself.  
 
-Out of the box, there are 4 properties that can be adjusted by editing src/main/resources/plugin.properties
+Out of the box, there are 4 properties that can be adjusted by editing the `src/main/resources/plugin.properties` file.
 
 ```properties
 ## Apply protection to these uris (begins with)
@@ -24,3 +24,15 @@ csrf.whitelist.host=testing.dotcms.com,testing2.dotcms.com
 csrf.whitelist.uri=/html/portal/login.jsp
 
 ```
+
+## building
+Building this plugin will provide two jars, both of which need to be installed in dotCMS.  Note: The fragment jar provides the exports needed to run the plugin without modifiying your exports manually.
+
+
+```shell
+git clone https://github.com/dotCMS/com.dotcms.csrffilter.git
+cd com.dotcms.csrffilter
+./gradlew clean jar
+``
+
+
