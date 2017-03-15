@@ -31,7 +31,7 @@ public class CSRFFilter implements Filter {
   Set<String> validReferers = new HashSet<>();
   Set<String> whitelistUri = new HashSet<>();
   Set<String> whitelistHosts = new HashSet<>();
-  Set<String> whitelistNetworks = new HashSet<>();
+  Set<String> whitelistIps = new HashSet<>();
   
   @Override
   public void init(FilterConfig config) throws ServletException {
@@ -52,7 +52,7 @@ public class CSRFFilter implements Filter {
     strings = PluginProperties.getPropertyArray("csrf.whitelist.ips");
     for (String x : strings) {
       Logger.info(this, "csrf whitelisted ip:" + x);
-      whitelistNetworks.add(x);
+      whitelistIps.add(x);
     }
     
     strings = PluginProperties.getPropertyArray("csrf.valid.host.referers");
@@ -154,12 +154,12 @@ public class CSRFFilter implements Filter {
     try{
       String visitorIp =  HttpRequestDataUtil.getIpAddress(req).getHostAddress();
 
-      for(String ipOrNetMask : whitelistNetworks){
-        
+      for(String ipOrNetMask : whitelistIps){
+        if(ipOrNetMask==null) continue;
         if (ipOrNetMask.contains("/")) {
           allow = new SubnetUtils(ipOrNetMask).getInfo().isInRange(visitorIp);
         } else {
-          allow = visitorIp.equals(ipOrNetMask);
+          allow = ipOrNetMask.equals(visitorIp);
         }
         if (allow) break;
       }
