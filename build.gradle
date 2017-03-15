@@ -35,7 +35,7 @@ Bundle-SymbolicName: fragment.system.extra.packages
 Bundle-Version: 1.0
 Bundle-Description: Bundle exporting 3rdparty libs
 Fragment-Host: system.bundle; extension:=framework
-Export-Package: org.apache.tomcat.util.descriptor.web,javax.servlet,javax.servlet.annotation,javax.servlet.http,org.apache.catalina,org.apache.catalina.core,org.apache.tomcat.util.descriptor.web
+Export-Package: com.dotcms.util,java.net,com.dotcms.repackage.org.apache.commons.net.util,org.apache.tomcat.util.descriptor.web,javax.servlet,javax.servlet.annotation,javax.servlet.http,org.apache.catalina,org.apache.catalina.core,org.apache.tomcat.util.descriptor.web
 		'''
 		new File(tmpPath + "/META-INF/MANIFEST.MF").write(exportFragmentStr)
 	}

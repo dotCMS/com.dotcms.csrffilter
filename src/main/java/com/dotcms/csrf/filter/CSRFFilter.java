@@ -1,6 +1,7 @@
 package com.dotcms.csrf.filter;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
@@ -15,6 +16,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dotcms.repackage.org.apache.commons.net.util.SubnetUtils;
+import com.dotcms.util.HttpRequestDataUtil;
 import com.dotmarketing.beans.Host;
 import com.dotmarketing.business.APILocator;
 import com.dotmarketing.business.DotStateException;
@@ -28,6 +31,8 @@ public class CSRFFilter implements Filter {
   Set<String> validReferers = new HashSet<>();
   Set<String> whitelistUri = new HashSet<>();
   Set<String> whitelistHosts = new HashSet<>();
+  Set<String> whitelistIps = new HashSet<>();
+  
   @Override
   public void init(FilterConfig config) throws ServletException {
     
@@ -42,6 +47,12 @@ public class CSRFFilter implements Filter {
     for (String x : strings) {
       Logger.info(this, "csrf whitelisted:" + x);
       whitelistUri.add(x);
+    }
+    
+    strings = PluginProperties.getPropertyArray("csrf.whitelist.ips");
+    for (String x : strings) {
+      Logger.info(this, "csrf whitelisted ip:" + x);
+      whitelistIps.add(x);
     }
     
     strings = PluginProperties.getPropertyArray("csrf.valid.host.referers");
@@ -85,7 +96,7 @@ public class CSRFFilter implements Filter {
   private boolean protectedUri(ServletRequest request) {
     if (request instanceof HttpServletRequest) {
       HttpServletRequest req = (HttpServletRequest)request;
-      if(hostWhiteListed(req)){
+      if(hostWhiteListed(req) || ipWhiteListed(req)){
         return false;
       }
       for (String test : protectedUri) {
@@ -135,5 +146,26 @@ public class CSRFFilter implements Filter {
     return whitelistHosts.contains(req.getServerName());
   }
   
-  
+  boolean ipWhiteListed(HttpServletRequest req){
+    boolean allow=false;
+    try{
+      String visitorIp =  HttpRequestDataUtil.getIpAddress(req).getHostAddress();
+
+      for(String ipOrNetMask : whitelistIps){
+        if(ipOrNetMask==null) continue;
+        if (ipOrNetMask.contains("/")) {
+          allow = new SubnetUtils(ipOrNetMask).getInfo().isInRange(visitorIp);
+        } else {
+          allow = ipOrNetMask.equals(visitorIp);
+        }
+        if (allow) break;
+      }
+
+
+    }
+    catch(Exception e){
+      Logger.error(this.getClass(), e.getMessage(), e);
+    }
+    return allow;
+  }
 }
