@@ -14,7 +14,7 @@ repositories {
 }
 dependencies {
 	compile fileTree(dir: 'src/main/resources/libs', include: '*.jar')
-	compile (group: 'com.dotcms', name: 'dotcms', version: '3.6.0'){
+	compile (group: 'com.dotcms', name: 'dotcms', version: '4.0.0'){
 		transitive = true
 	}
 	providedCompile "javax.servlet:javax.servlet-api:3.0.1"
