@@ -96,10 +96,7 @@ public class CSRFFilter implements Filter {
   private boolean protectedUri(ServletRequest request) {
     if (request instanceof HttpServletRequest) {
       HttpServletRequest req = (HttpServletRequest)request;
-      if(hostWhiteListed(req)){
-        return false;
-      }
-      if(ipWhiteListed(req)){
+      if(hostWhiteListed(req) || ipWhiteListed(req)){
         return false;
       }
       for (String test : protectedUri) {
