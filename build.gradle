@@ -1,3 +1,7 @@
+plugins {
+    id 'biz.aQute.bnd.builder' version '3.3.0'
+}
+
 apply plugin: 'application'
 apply plugin: 'osgi'
 apply plugin: 'war'
@@ -12,11 +16,14 @@ repositories {
         url "http://repo.dotcms.com/artifactory/libs-release"
     }
 }
+
+configurations {
+    osgiLibs
+}
+
 dependencies {
 	compile fileTree(dir: 'src/main/resources/libs', include: '*.jar')
-	compile (group: 'com.dotcms', name: 'dotcms', version: '3.6.0'){
-		transitive = true
-	}
+	compile('com.dotcms:dotcms:4.2.2') { transitive = true }
 	providedCompile "javax.servlet:javax.servlet-api:3.0.1"
 	providedCompile 'org.apache.tomcat:tomcat-catalina:8.0.18'
 
@@ -73,6 +80,6 @@ jar.dependsOn fragment
 
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.9'
+    gradleVersion = '4.2'
 }
 
