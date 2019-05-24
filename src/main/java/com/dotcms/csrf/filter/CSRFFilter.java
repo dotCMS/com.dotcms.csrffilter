@@ -32,10 +32,10 @@ public class CSRFFilter implements Filter {
   Set<String> whitelistUri = new HashSet<>();
   Set<String> whitelistHosts = new HashSet<>();
   Set<String> whitelistIps = new HashSet<>();
-  
+
   @Override
   public void init(FilterConfig config) throws ServletException {
-    
+
     Logger.info(CSRFFilter.class.getName(), "initing");
     String[] strings = PluginProperties.getPropertyArray("csrf.protect.uri");
     for (String x : strings) {
@@ -48,19 +48,19 @@ public class CSRFFilter implements Filter {
       Logger.info(this, "csrf whitelisted:" + x);
       whitelistUri.add(x);
     }
-    
+
     strings = PluginProperties.getPropertyArray("csrf.whitelist.ips");
     for (String x : strings) {
       Logger.info(this, "csrf whitelisted ip:" + x);
       whitelistIps.add(x);
     }
-    
+
     strings = PluginProperties.getPropertyArray("csrf.valid.host.referers");
     for (String x : strings) {
       Logger.info(this, "csrf allowed referering domains:" + x);
       validReferers.add(x);
     }
-    
+
     strings = PluginProperties.getPropertyArray("csrf.whitelist.host");
     for (String x : strings) {
       Logger.info(this, "csrf whitelisted domains:" + x);
@@ -69,15 +69,14 @@ public class CSRFFilter implements Filter {
   }
 
   @Override
-  public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
-      throws IOException, ServletException {
+  public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 
     try {
       if (protectedUri(req)) {
         HttpServletRequest request = (HttpServletRequest) req;
         if (!allowedReferer(request)) {
-          
-          ((HttpServletResponse)res).sendError(403);
+
+          ((HttpServletResponse) res).sendError(403);
           return;
         }
       }
@@ -89,19 +88,18 @@ public class CSRFFilter implements Filter {
 
   @Override
   public void destroy() {
-    Logger.info(CSRFFilter.class.getName(),"destroy:" + this.getClass().getName());
+    Logger.info(CSRFFilter.class.getName(), "destroy:" + this.getClass().getName());
   }
-
 
   private boolean protectedUri(ServletRequest request) {
     if (request instanceof HttpServletRequest) {
-      HttpServletRequest req = (HttpServletRequest)request;
-      if(hostWhiteListed(req) || ipWhiteListed(req)){
+      HttpServletRequest req = (HttpServletRequest) request;
+      if (hostWhiteListed(req) || ipWhiteListed(req)) {
         return false;
       }
       for (String test : protectedUri) {
         if (req.getRequestURI().startsWith(test)) {
-          if(!whitelistUri.contains(req.getRequestURI())){
+          if (!whitelistUri.contains(req.getRequestURI())) {
             return true;
           }
         }
@@ -124,7 +122,7 @@ public class CSRFFilter implements Filter {
       try {
         // Trying to find the host in our list of hosts
         Host foundHost = APILocator.getHostAPI().findByName(refererHost, APILocator.getUserAPI().getSystemUser(), false);
-        if (!UtilMethods.isSet(foundHost) ) {
+        if (!UtilMethods.isSet(foundHost)) {
           foundHost = APILocator.getHostAPI().findByAlias(refererHost, APILocator.getUserAPI().getSystemUser(), false);
         }
         if (UtilMethods.isSet(foundHost)) {
@@ -136,34 +134,34 @@ public class CSRFFilter implements Filter {
       }
 
     }
-    String msg = "CSRFFilter ip:" + req.getRemoteAddr()+" has invalid referer:" + refererHost +  " url:" + req.getRequestURL();
+    String msg = "CSRFFilter ip:" + req.getRemoteAddr() + " has invalid referer:" + refererHost + " url:" + req.getRequestURL();
     SecurityLogger.logInfo(this.getClass(), msg);
-    Logger.warn(this.getClass(),  msg  );
+    Logger.warn(this.getClass(), msg);
     return false;
   }
 
-  boolean hostWhiteListed(HttpServletRequest req){
+  boolean hostWhiteListed(HttpServletRequest req) {
     return whitelistHosts.contains(req.getServerName());
   }
-  
-  boolean ipWhiteListed(HttpServletRequest req){
-    boolean allow=false;
-    try{
-      String visitorIp =  HttpRequestDataUtil.getIpAddress(req).getHostAddress();
 
-      for(String ipOrNetMask : whitelistIps){
-        if(ipOrNetMask==null) continue;
+  boolean ipWhiteListed(HttpServletRequest req) {
+    boolean allow = false;
+    try {
+      String visitorIp = HttpRequestDataUtil.getIpAddress(req).getHostAddress();
+
+      for (String ipOrNetMask : whitelistIps) {
+        if (ipOrNetMask == null)
+          continue;
         if (ipOrNetMask.contains("/")) {
           allow = new SubnetUtils(ipOrNetMask).getInfo().isInRange(visitorIp);
         } else {
           allow = ipOrNetMask.equals(visitorIp);
         }
-        if (allow) break;
+        if (allow)
+          break;
       }
 
-
-    }
-    catch(Exception e){
+    } catch (Exception e) {
       Logger.error(this.getClass(), e.getMessage(), e);
     }
     return allow;

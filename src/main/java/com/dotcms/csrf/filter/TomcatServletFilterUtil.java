@@ -29,7 +29,6 @@ public class TomcatServletFilterUtil {
 
   private final StandardContext standardContext;
 
-
   public TomcatServletFilterUtil(StandardContext con) {
     standardContext = con;
   }
@@ -47,7 +46,6 @@ public class TomcatServletFilterUtil {
       appField.setAccessible(true);
       ApplicationContext appContext = (ApplicationContext) appField.get(fappContext);
 
-
       Field stdField = appContext.getClass().getDeclaredField("context");
       stdField.setAccessible(true);
 
@@ -58,7 +56,6 @@ public class TomcatServletFilterUtil {
   }
 
   ServletRegistration.Dynamic addServlet(String servletName, Servlet servlet, String... urlPatterns) throws Exception {
-
 
     removeServlet(servletName);
 
@@ -76,8 +73,6 @@ public class TomcatServletFilterUtil {
     Logger.info(this.getClass(), "Servlet added:" + servletName);
     return dynamic;
   }
-
-
 
   void removeServlet(String servletName) {
     try {
@@ -97,7 +92,6 @@ public class TomcatServletFilterUtil {
   void removeFilter(String filterName) {
     removeFilter(filterName, null, true);
   }
-
 
   private void removeFilter(String filterName, Filter filter, boolean restart) {
     try {
@@ -125,13 +119,11 @@ public class TomcatServletFilterUtil {
 
   }
 
-  void addFilter(String filterName, Filter filter, FilterOrder order, String... urlPatterns)
-      throws IllegalStateException {
+  void addFilter(String filterName, Filter filter, FilterOrder order, String... urlPatterns) throws IllegalStateException {
 
     if (filterName == null || filterName.equals("")) {
       throw new IllegalArgumentException("filter name required");
     }
-
 
     removeFilter(filterName, filter, false);
 
@@ -139,8 +131,6 @@ public class TomcatServletFilterUtil {
     filterDef.setFilterName(filterName);
     filterDef.setFilterClass(filter.getClass().getName());
     filterDef.setFilter(filter);
-
-
 
     standardContext.addFilterDef(filterDef);
 
@@ -150,7 +140,6 @@ public class TomcatServletFilterUtil {
 
     app.addMappingForUrlPatterns(null, last, urlPatterns);
     standardContext.filterStart();
-
 
   }
 }
