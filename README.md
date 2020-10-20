@@ -1,4 +1,4 @@
-# dotCMS CsrfFilter
+# dotCMS CsrfFilter (Deprecated - incorporated into core dotCMS)
 
 This filter can help provide a first line of protection from CSRF (Cross-site Request Forgery) type attacks against the dotCMS admin tool.  It works by checking the browser header "referer" and validating the referering host against the list of hosts being served in dotCMS. A config property (see below) can be set to add other hosts to that list or you can just add the allowed hostnames as aliases to your default host in dotCMS.
 
